@@ -21,7 +21,6 @@ try:
     import minimalmodbus 
 except:
     pass
-import pytest
 
         
 logger = logging.getLogger(__name__)
@@ -180,7 +179,6 @@ def write_metrics(metrics, filename='metrics.csv'):
     
     return full_filename
 
-@pytest.mark.skip()
 def write_test_results(test_results, filename='test_results.csv'):
     """
     Write test results file.

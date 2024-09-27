@@ -16,7 +16,6 @@ except:
 import textwrap
 import os
 import logging
-import pytest
 
 NoneType = type(None)
 
@@ -419,8 +418,8 @@ def plot_doy_heatmap(data, cmap='nipy_spectral', vmin=None, vmax=None,
     ax.set_xlabel("Day of the year")
     ax.set_ylabel("Time of day (minutes)")
     plt.tight_layout()
-    
-@pytest.mark.skip()
+
+
 def plot_test_results(data, test_results, tfilter=None, image_format='png', 
                       dpi=500, figsize=(7.0,3.0), date_formatter=None, 
                       filename_root='test_results'):
