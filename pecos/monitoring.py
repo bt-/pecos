@@ -759,8 +759,8 @@ class PerformanceMonitoring(object):
 
         self._append_test_results(mask, 'Corrupt data', min_failures=min_failures)
 
-    def check_custom_static(self, quality_control_func, key=None, min_failures=1,
-                           error_message=None):
+    def check_custom_static(self, quality_control_func, *args, key=None, min_failures=1,
+                           error_message=None, **kwargs):
         """
         Use custom functions that operate on the entire dataset at once to 
         perform quality control analysis
@@ -769,6 +769,8 @@ class PerformanceMonitoring(object):
         ----------
         quality_control_func : function
             Function that operates on self.df and returns a mask and metadata
+        
+        *args : additional positional arguments passed to quality_control_func
         
         key : string, optional
             Data column name or translation dictionary key. If not specified, 
@@ -780,6 +782,8 @@ class PerformanceMonitoring(object):
             
         error_message : str, optional
             Error message
+        
+        **kwargs : additional keyword arguments passed to quality_control_func
         """
         assert callable(quality_control_func), 'quality_control_func must be a callable function'
         assert isinstance(key, (NoneType, str)), 'key must be None or of type string'
@@ -792,7 +796,7 @@ class PerformanceMonitoring(object):
         
         # Function that operates on the entire dataset and returns a mask and
         # metadata for the entire dataset
-        mask, metadata = quality_control_func(df) 
+        mask, metadata = quality_control_func(df, *args, **kwargs) 
         assert isinstance(mask, pd.DataFrame), 'mask returned by quality_control_func must be of type pd.DataFrame'
         assert isinstance(metadata, pd.DataFrame), 'metadata returned by quality_control_func must be of type pd.DataFrame'
         
@@ -977,12 +981,12 @@ def check_corrupt(data, corrupt_values, key=None, min_failures=1):
     return {'cleaned_data': data[mask], 'mask': mask, 'test_results': pm.test_results}
 
 @_documented_by(PerformanceMonitoring.check_custom_static, include_metadata=True)
-def check_custom_static(data, quality_control_func, key=None, min_failures=1,
-                           error_message=None):
+def check_custom_static(data, quality_control_func, *args, key=None, min_failures=1,
+                           error_message=None, **kwargs):
 
     pm = PerformanceMonitoring()
     pm.add_dataframe(data)
-    metadata = pm.check_custom_static(quality_control_func, key, min_failures, error_message)
+    metadata = pm.check_custom_static(quality_control_func, *args, key=key, min_failures=min_failures, error_message=error_message, **kwargs)
     mask = pm.mask
 
     return {'cleaned_data': data[mask], 'mask': mask, 'test_results': pm.test_results,
